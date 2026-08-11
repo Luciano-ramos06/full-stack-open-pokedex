@@ -30,13 +30,14 @@ jobs:
         run: npm run test
         
       - name: Trigger deployment
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name == 'push' && github.event.action != 'skip' }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
 
   tag_release:
     needs: simple_deployment_pipeline
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Bump version and push tag
         if: ${{ github.event_name == 'push' }}
         uses: anothrNick/github-tag-action@1.75.0
